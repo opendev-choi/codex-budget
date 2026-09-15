@@ -297,7 +297,7 @@ def line(status):
 
 
 def notice(status):
-    return (line(status) + '\n오늘 예산에 도달했거나 쉬는 날입니다. 다음 요청에서 선택 창이 표시됩니다. 직접 입력도 가능:\n'
+    return (line(status) + '\n오늘 예산에 도달했거나 쉬는 날입니다. 지원되는 실행 모드에서는 다음 요청에 선택 창이 표시됩니다. 직접 입력도 가능:\n'
             '  예산 +5  → 오늘 5%p 추가\n  예산 해제  → 오늘 제한 해제\n  예산 쉬기  → 오늘 쉬기\n'
             '직접 입력했다면 원래 요청을 다시 보내세요. 설정: 다른 셸에서 codex-budget configure')
 

@@ -37,7 +37,9 @@ async def evaluate(prompt, elicit):
             return {'systemMessage': status['warning']} if status.get('warning') else {}
         answer = await elicit(b.line(status) + '\n오늘 예산에 도달했거나 쉬는 날입니다.', BudgetChoice)
         if answer.action != 'accept' or answer.data is None:
-            return blocked('선택을 취소했습니다. 이 요청은 실행하지 않습니다.')
+            return blocked('선택이 제출되지 않았습니다. 사용자 취소 또는 실행 환경의 자동 거절일 수 있습니다.\n'
+                           'Codex 입력창에 예산 +5 / 예산 해제 / 예산 쉬기 중 하나를 입력하세요.\n'
+                           '선택 창을 사용하려면 터미널에서 codex -a on-request로 실행하세요.')
         current = await asyncio.to_thread(b.refresh, fresh=True)
         if current['date'] != status['date'] or current.get('account') != status.get('account'):
             return blocked('날짜나 계정이 바뀌었습니다. 요청을 다시 보내 새 예산을 확인하세요.')

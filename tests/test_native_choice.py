@@ -50,6 +50,8 @@ class NativeChoiceTest(unittest.IsolatedAsyncioTestCase):
                 result = await m.evaluate('request', AsyncMock(return_value=SimpleNamespace(action=action, data=None)))
             self.assertEqual(result['decision'], 'block')
             self.assertEqual(refresh.call_count, 1)
+            self.assertIn('자동 거절', result['reason'])
+            self.assertIn('예산 +5', result['reason'])
 
     async def test_date_or_account_change_during_selection_requires_retry(self):
         for changed in ({'date': '2026-09-16'}, {'account': 'different'}):

@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "codex-budget"
+version = "0.1.0"
+description = "Daily budgets, configurable warnings, and a tmux status line for Codex CLI."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "opendev-choi" }]
+dependencies = ["holidays>=0.104,<1", "tomlkit>=0.13,<1", "mcp>=1.30,<2"]
+
+[project.scripts]
+codex-budget = "codex_budget.budget:entrypoint"
+codex-budget-run = "codex_budget.launch:entrypoint"
+
+[project.urls]
+Repository = "https://github.com/opendev-choi/codex-budget"
+Issues = "https://github.com/opendev-choi/codex-budget/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/codex_budget"]

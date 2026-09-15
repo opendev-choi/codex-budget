@@ -14,6 +14,9 @@ class NativeChoiceTest(unittest.IsolatedAsyncioTestCase):
         self.addCleanup(self.temp.cleanup)
         self.patch = patch.object(b, 'DATA', Path(self.temp.name))
         self.patch.start()
+        ui = patch.object(m.popup, 'available', return_value=False)
+        ui.start()
+        self.addCleanup(ui.stop)
         self.addCleanup(self.patch.stop)
         self.status = {'date': '2026-09-15', 'account': 'test', 'used': 20, 'limit': 20,
                        'weekly_remaining': 60, 'blocked': True, 'enabled': True,
@@ -78,6 +81,20 @@ class NativeChoiceTest(unittest.IsolatedAsyncioTestCase):
             result = await m.evaluate('request', AsyncMock())
         self.assertEqual(result, {})
         refresh.assert_not_called()
+
+    async def test_tmux_choice_does_not_call_native_approval_ui(self):
+        ask = AsyncMock()
+        allowed = {**self.status, 'limit': 25, 'blocked': False}
+        with patch.object(m.popup, 'available', return_value=True), patch.object(m.popup, 'ask', return_value='5%p 추가 사용'), patch.object(b, 'refresh', side_effect=[self.status, self.status, allowed]):
+            result = await m.evaluate('original request', ask)
+        ask.assert_not_called()
+        self.assertNotIn('decision', result)
+
+    async def test_tmux_cancel_does_not_grant_budget(self):
+        with patch.object(m.popup, 'available', return_value=True), patch.object(m.popup, 'ask', return_value=None), patch.object(b, 'refresh', return_value=self.status) as refresh:
+            result = await m.evaluate('request', AsyncMock())
+        self.assertEqual(result['decision'], 'block')
+        self.assertEqual(refresh.call_count, 1)
 
     def test_choices_have_no_preapproved_default(self):
         from mcp.server.elicitation import _validate_elicitation_schema

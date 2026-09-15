@@ -56,7 +56,7 @@ def owned(handler):
 def handler_for(event, command):
     if event == 'UserPromptSubmit':
         return {'type': 'mcp_tool', 'server': TAG, 'tool': 'budget_gate',
-                'input': {'prompt': '${prompt}'}, 'timeout': 45, 'statusMessage': TAG}
+                'input': {'prompt': '${prompt}'}, 'timeout': 120, 'statusMessage': TAG}
     return {'type': 'command', 'command': command, 'timeout': 45, 'statusMessage': TAG}
 
 
@@ -109,7 +109,10 @@ def configure_mcp(remove=False):
         servers[TAG] = {'command': sys.executable, 'args': ['-m', 'codex_budget.mcp_server'],
                         'env': {'CODEX_BINARY': b.codex_binary(), 'CODEX_BUDGET_HOME': str(b.DATA),
                                 'CODEX_HOME': str(codex_home())},
-                        'required': True, 'startup_timeout_sec': 20, 'tool_timeout_sec': 60}
+                        'env_vars': ['TMUX', 'TMUX_PANE'],
+                        'required': True, 'startup_timeout_sec': 20, 'tool_timeout_sec': 150}
+    if not remove and shutil.which('tmux'):
+        servers[TAG]['env']['CODEX_BUDGET_TMUX_BINARY'] = shutil.which('tmux')
     updated = tomlkit.dumps(doc)
     if updated != original:
         backup(path)

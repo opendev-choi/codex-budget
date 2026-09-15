@@ -344,7 +344,7 @@ def run_hook():
         elif name == 'SessionStart':
             result = {'systemMessage': notice(status) if status['blocked'] else (status.get('warning') or line(status))}
         elif name == 'Stop' and status['blocked']:
-            result = {'continue': False, 'stopReason': notice(status), 'systemMessage': notice(status)}
+            result = {'continue': False, 'stopReason': notice(status)}
         elif status.get('warning'):
             result = {'systemMessage': status['warning']}
         else:

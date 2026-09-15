@@ -151,6 +151,8 @@ class BudgetTest(unittest.TestCase):
         self.assertIn('예산 +5', output['reason'])
         output = self.hook({'hook_event_name': 'Stop'}, status)
         self.assertFalse(output['continue'])
+        self.assertIn('stopReason', output)
+        self.assertNotIn('systemMessage', output)
 
     def test_query_failure_blocks_prompt(self):
         output = self.hook({'hook_event_name': 'UserPromptSubmit', 'prompt': '작업'}, error=RuntimeError('offline'))
